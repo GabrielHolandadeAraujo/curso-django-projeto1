@@ -19,7 +19,7 @@ def category(request, category_id):
             is_published=True,
         ).order_by('-id')
     )
-    #Abrir tela de emojis é WINDOWS + . (ponto)
+    # Abrir tela de emojis é WINDOWS + . (ponto)
     return render(request, 'recipes/pages/category.html', context={
         'recipes': recipes,
         'title': f'{recipes[0].category.name} - Category | '
