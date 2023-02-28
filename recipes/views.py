@@ -1,5 +1,6 @@
 from django.shortcuts import get_list_or_404, get_object_or_404, render
 from django.http.response import Http404
+from django.db.models import Q
 from recipes.models import Recipe
 
 
@@ -35,12 +36,26 @@ def recipe(request, id):
     })
 
 def search(request):
+    # o strip tira os espaços em branco antes e depois da string
     search_term = request.GET.get('q', '').strip()
 
     if not search_term:
         raise Http404()
+    # O - no id serve para inverter a ordem, o Q coloca os termos entre parênteses 
+    # O | (pipe) serve para substituir a busca do AND para OR
+    # o varaivel__icontains serve para buscar algo que contenha, exemplo: bolo acha bolo de cenoura
+    # o i de icontains serve para ignorar caixa alta ou baixa na busca, sem o i ele considera
+
+    recipes = Recipe.objects.filter(
+        Q(
+            Q(title__icontains=search_term) |
+            Q(description__icontains=search_term),
+        ),
+        is_published=True
+    ).order_by('-id')
     
     return render(request, 'recipes/pages/search.html', {
         'page_title': f'Search for "{search_term}" |',
         'search_term': search_term,
+        'recipes': recipes,
     })
