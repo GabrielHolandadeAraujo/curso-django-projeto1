@@ -1,20 +1,24 @@
-from django.shortcuts import get_list_or_404, get_object_or_404, render
-from django.http.response import Http404
+import os
+
+from django.contrib import messages
 from django.db.models import Q
+from django.http.response import Http404
+from django.shortcuts import get_list_or_404, get_object_or_404, render
+
 from recipes.models import Recipe
 from utils.pagination import make_pagination
-import os
 
 # Aqui estamos definindo a qtd de itens por página usando a constante em .env
 # Caso o valor da 'PER_PAGE' não seja encontrado, o valor padrão será 6
 PER_PAGE = int(os.environ.get('PER_PAGE', 6))
+
 
 def home(request):
     recipes = Recipe.objects.filter(
         is_published=True,
     ).order_by('-id')
     page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
-    
+
     return render(request, 'recipes/pages/home.html', context={
         'recipes': page_obj,
         'pagination_range': pagination_range
@@ -44,17 +48,17 @@ def recipe(request, id):
         'is_detail_page': True,
     })
 
+
 def search(request):
     # o strip tira os espaços em branco antes e depois da string
     search_term = request.GET.get('q', '').strip()
 
     if not search_term:
         raise Http404()
-    # O - no id serve para inverter a ordem, o Q coloca os termos entre parênteses 
+    # O - no id serve para inverter a ordem, o Q coloca os termos entre parênteses
     # O | (pipe) serve para substituir a busca do AND para OR
     # o varaivel__icontains serve para buscar algo que contenha, exemplo: bolo acha bolo de cenoura
-    # o i de icontains serve para ignorar caixa alta ou baixa na busca, sem o i ele considera
-
+    # o i de icontains serve para ignorar caixa alta ou baixa na busca, sem o i ele considera   
     recipes = Recipe.objects.filter(
         Q(
             Q(title__icontains=search_term) |
@@ -63,8 +67,11 @@ def search(request):
         is_published=True
     ).order_by('-id')
 
+    # o messages precisa ser importado e serve para flash messages com alertas como success, error e warning
+    messages.success(request, 'Epa, você foi pesquisar algo que eu vi.')
+
     page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
-    
+
     return render(request, 'recipes/pages/search.html', {
         'page_title': f'Search for "{search_term}" |',
         'search_term': search_term,
