@@ -3,12 +3,17 @@ from django.http.response import Http404
 from django.db.models import Q
 from recipes.models import Recipe
 from utils.pagination import make_pagination
+import os
+
+# Aqui estamos definindo a qtd de itens por página usando a constante em .env
+# Caso o valor da 'PER_PAGE' não seja encontrado, o valor padrão será 6
+PER_PAGE = int(os.environ.get('PER_PAGE', 6))
 
 def home(request):
     recipes = Recipe.objects.filter(
         is_published=True,
     ).order_by('-id')
-    page_obj, pagination_range = make_pagination(request, recipes, 9)
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
     
     return render(request, 'recipes/pages/home.html', context={
         'recipes': page_obj,
@@ -23,7 +28,7 @@ def category(request, category_id):
             is_published=True,
         ).order_by('-id')
     )
-    page_obj, pagination_range = make_pagination(request, recipes, 9)
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
     # Abrir tela de emojis é WINDOWS + . (ponto)
     return render(request, 'recipes/pages/category.html', context={
         'recipes': page_obj,
@@ -58,7 +63,7 @@ def search(request):
         is_published=True
     ).order_by('-id')
 
-    page_obj, pagination_range = make_pagination(request, recipes, 9)
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
     
     return render(request, 'recipes/pages/search.html', {
         'page_title': f'Search for "{search_term}" |',

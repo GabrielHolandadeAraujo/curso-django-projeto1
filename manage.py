@@ -3,10 +3,15 @@
 import os
 import sys
 
+from dotenv import load_dotenv
 
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
+    # esse load_dotenv permite que as variáveis constantes contidas nele sejam carregadas
+    # È necessário importar e carregar o load_dotenv nas páginas de desenvolvimento e produção
+    # Em um projeto padrão é necessário carregar na manage.py, wsgi.py e asgi.py
+    load_dotenv()
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
