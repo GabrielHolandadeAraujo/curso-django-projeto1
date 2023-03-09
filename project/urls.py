@@ -19,8 +19,12 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
+    # Aqui será passado os caminhos das urls do site, é preciso importar o include e o path do django.urls 
+    # o path é uma função onde passaremos como será a url no primeiro argumento e em seguida usamos o include 
+    # para passar o url do app em questão, precisa ser o msm nome que está no app.py do app em questão
     path('admin/', admin.site.urls),
     path('', include('recipes.urls')),
+    path('authors/', include('authors.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

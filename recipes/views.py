@@ -68,7 +68,9 @@ def search(request):
     ).order_by('-id')
 
     # o messages precisa ser importado e serve para flash messages com alertas como success, error e warning
-    messages.success(request, 'Epa, você foi pesquisar algo que eu vi.')
+    # messages.error(request, 'Epa, você foi pesquisar algo que eu vi.')
+    # messages.success(request, 'Epa, você foi pesquisar algo que eu vi.')
+    # messages.info(request, 'Epa, você foi pesquisar algo que eu vi.')
 
     page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
 
