@@ -1,1 +1,43 @@
-<h1>Olá mundo</h1>
+{% comment %} usamos o extends com o caminho para extender de uma página HTML, completando da forma desejada 
+Nesse caso estamos estendendo a home de forma excluisa para os authores {% endcomment %}
+{% extends 'global/base.html' %}
+{% comment %} Aqui estamos criando um bloco de conteúdo que substitituir a pagina que estamos extendendo
+é necessário usar o memso nome do bloco{% endcomment %}
+{% block title %}Register | {% endblock title %}
+
+{% block content %}
+  <div class="main-content center container">
+    <h2>Register</h2>
+  </div>
+
+  <div class="main-content container">
+    {% comment %} Aqui estamos passando o método POST no form, isso pode ser usado como lógica de rota do sistema {% endcomment %}
+    <form action="" method="POST">
+    {% comment %} Esse csrf_token é obrigatório em forms do Django, pois serve para evitar ataques CSRF {% endcomment %}
+      {% csrf_token %}
+
+      <div class="form-content form-content-grid">
+        {% for field in form %}
+          <div class="form-group">
+            {% comment %} Aqui cada field tem uma id proória, então podemos selcionar cada uma com um for {% endcomment %}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% comment %} Esse field aqui mostra apenas o campo para receber os dados, precisamos do label 
+            acima para exibir os nomes dos campos {% endcomment %}
+            {{field}}
+            {% comment %} field.help_text é o campo que precisa seguir um padrão para ser aceito, isso é descrito
+            na tabela em questão (User no caso), por exemplo, um nome com limite de caracteres {% endcomment %}
+            {% if field.help_text %}
+              <p class="help-text">{{ field.help_text }}</p>
+            {% endif %}
+            {% comment %} O fiel.erros são o feedback de erros caso o usuário esteja mandando uma info inválida {% endcomment %}
+            {{ field.errors }}
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="form-group">
+        <button type="submit">Send</button>
+      </div>
+    </form>
+  </div>
+{% endblock content %}
