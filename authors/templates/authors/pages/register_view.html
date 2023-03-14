@@ -7,12 +7,12 @@ Nesse caso estamos estendendo a home de forma excluisa para os authores {% endco
 
 {% block content %}
   <div class="main-content center container">
-    <h2>Register</h2>
+    <h2>Register {{ request.session.number }}</h2>
   </div>
 
   <div class="main-content container">
     {% comment %} Aqui estamos passando o método POST no form, isso pode ser usado como lógica de rota do sistema {% endcomment %}
-    <form action="" method="POST">
+    <form action="{% url 'authors:create' %}" method="POST">
     {% comment %} Esse csrf_token é obrigatório em forms do Django, pois serve para evitar ataques CSRF {% endcomment %}
       {% csrf_token %}
 
@@ -35,8 +35,10 @@ Nesse caso estamos estendendo a home de forma excluisa para os authores {% endco
         {% endfor %}
       </div>
 
-      <div class="form-group">
-        <button type="submit">Send</button>
+      <div class="form-content form-content-grid">
+        <div class="form-group">
+          <button type="submit">Send</button>
+        </div>
       </div>
     </form>
   </div>
