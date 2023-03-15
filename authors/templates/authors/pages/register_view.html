@@ -36,6 +36,19 @@ o extends deve ser a primeira tag no doc parcial, não pode ter nem comentário 
         {% endfor %}
       </div>
 
+      {% comment %} aqui estamos verificando se existem mensagens de erro nos campos 
+      e dando uma aviso para que é necessário resolver para submeter, as mensagens de
+       erro também aparecem nos campos devido ao processo que ocorre em forms.py {% endcomment %}
+      {% if form.errors %}
+      <div class="form-content form-content-grid">
+        <div class="form-group">
+          <div class="message message-error">
+            There are errors in the form, please fix them and send again.
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
       <div class="form-content form-content-grid">
         <div class="form-group">
           <button type="submit">Send</button>

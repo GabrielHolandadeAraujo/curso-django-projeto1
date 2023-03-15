@@ -139,3 +139,27 @@ class RegisterForm(forms.ModelForm):
             )
 
         return data
+    
+    # o clean sem definir nenhum campo especifico é uma função de validação do form inteiro e pode 
+    # ser usado para validar mais de um campo ao msm tempo, como no caso de senhas iguais 
+    def clean(self):
+        # podemos acessar a classe pai com super e depois com .clean() para pegar todos os forms, 
+        cleaned_data = super().clean()
+        # depois é só pegar os especificos com o get
+        password = cleaned_data.get('password')
+        password2 = cleaned_data.get('password')
+        # aqui estamos jogando o erro para uma variável e depois levantamos o erro nos campos desejados passando 
+        # a variável
+        if password != password2:
+            password_confirmation_error = ValidationError(
+                'Password e and password2 must be equal',
+                code='invalid'
+            )
+            raise ValidationError({
+                # podemos passa um dicionário com as chaves dos campos e valores dos erros
+                'password': password_confirmation_error,
+                # e podemos passar uma lista de erros no valor da chave
+                'password2': [
+                    password_confirmation_error,
+                ],
+            })
