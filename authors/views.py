@@ -25,5 +25,6 @@ def register_create(request):
     POST = request.POST
     request.session['register_form_data'] = POST
     form = RegisterForm(POST)
-
+    # o redirect é para madar o retorno para outra tela, no caso essa de authors:register que será usada na 
+    # função de register_view acima
     return redirect('authors:register')

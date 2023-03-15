@@ -1,6 +1,7 @@
-{% comment %} usamos o extends com o caminho para extender de uma página HTML, completando da forma desejada 
-Nesse caso estamos estendendo a home de forma excluisa para os authores {% endcomment %}
 {% extends 'global/base.html' %}
+{% comment %} usamos o extends com o caminho para extender de uma página HTML, completando da forma desejada 
+Nesse caso estamos estendendo a home de forma excluisa para os authores, além disso 
+o extends deve ser a primeira tag no doc parcial, não pode ter nem comentário antes {% endcomment %}
 {% comment %} Aqui estamos criando um bloco de conteúdo que substitituir a pagina que estamos extendendo
 é necessário usar o memso nome do bloco{% endcomment %}
 {% block title %}Register | {% endblock title %}
