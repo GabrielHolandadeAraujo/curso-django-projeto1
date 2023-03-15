@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 # É interessante criar um arquivo forms.py para controlar os formulários, nele precisa criar uma classe que
 # herda de forms.ModelForm pq ele é atrlado ao model do User que foi importado
@@ -109,3 +110,32 @@ class RegisterForm(forms.ModelForm):
                 'placeholder': 'Type your password here'
             })
         }
+
+    # a função clean é prórpia do Django e deve ser usada com _algumCampo, nos exemplos abaixo tem passsword 
+    # e first_name. é possivel pegar os dados brutos dos campos com self.data ou tratados pelo django com 
+    # self.cleaned_data e pegar o campos específico com o get
+    def clean_password(self):
+        data = self.cleaned_data.get('password')
+        # podemos impedir uma string em específica entrar no campo, como no caso de atenção levantado um erro 
+        # de validação com o ValidationError (precisa ser importado). Detro da validação você pode colocar uma 
+        # mensagem e usar o %(var)s e depois definr a var no params, para especificar o termo que não vai entrar.
+        # também tem que clocar o código do erro como invalid, max_lenth ou required.
+        if 'atenção' in data:
+            rasie ValidationError(
+                'Não digite %(pipoca)s no campo password',
+                code='invalid'
+                params={'pipoca': '"atenção'}
+            )
+        return data
+    
+    def clean_first_name(self):
+        data = self.cleaned_data.get('first_name')
+
+        if 'John Doe' in data:
+            raise ValidationError(
+                'Não digite %(value)s no campo first name',
+                code='invalid',
+                params={'value': '"John Doe"'}
+            )
+
+        return data
