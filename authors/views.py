@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .forms import RegisterForm
 from django.http import Http404
+from django.contrib import messages
 
 # Create your views here.
 
@@ -25,6 +26,16 @@ def register_create(request):
     POST = request.POST
     request.session['register_form_data'] = POST
     form = RegisterForm(POST)
+    # estamos verificando se o formulario foi validado, se sim o django vai salvar na base de dados e exibir 
+    # uma menssagem de sucesso.
+    if form.is_valid():
+        # existe uma forma de fingir salvar o usuário para adicionar novos valores, um exemplo: 
+        # form.save(commit=False), dessaa forma o commit não é feito e podemos add mais valores
+        form.save()
+        messages.success(request, 'Your user was created, please log in.')
+        # Após salvar precisamos apagar os dados que foram preenchidos nos campos para ficar em branco novamente
+        del(request.session['register_form_data'])
+
     # o redirect é para madar o retorno para outra tela, no caso essa de authors:register que será usada na 
     # função de register_view acima
     return redirect('authors:register')

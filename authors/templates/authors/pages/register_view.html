@@ -8,8 +8,10 @@ o extends deve ser a primeira tag no doc parcial, não pode ter nem comentário 
 
 {% block content %}
   <div class="main-content center container">
-    <h2>Register {{ request.session.number }}</h2>
+    <h2>Register</h2>
   </div>
+
+  {% include 'recipes/partials/messages.html' %}
 
   <div class="main-content container">
     {% comment %} Aqui estamos passando o método POST no form, isso pode ser usado como lógica de rota do sistema {% endcomment %}
