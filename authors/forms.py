@@ -50,11 +50,25 @@ class RegisterForm(forms.ModelForm):
         add_placeholder(self.fields['password2'], 'Repeat your password')
         # add_attr(self.fields['username'], 'css', 'a-css-class')
 
+    first_name = forms.CharField(
+        error_messages={'required': 'Write your first name'},
+        label='First name'
+    )
+    last_name = forms.CharField(
+        error_messages={'required': 'Write your last name'},
+        label='Last name'
+    )
+    email = forms.EmailField(
+        error_messages={'required': 'E-mail is required'},
+        label='E-mail',
+        help_text='The e-mail must be valid.',
+    )
+
     # Aqui é uma alteração diferente, estamos alterando diretamente um campo, primeiro defindo como campo de 
-    # caracteres e colocando o required para True, dessa forma o campo é obrigaório, se estivesse falso o 
-    # campo seria opcional (como um complemento de um endereço)
+    # caracteres e colocando o required para True (pode omitir, pois True é padrão), 
+    # dessa forma o campo é obrigaório, se estivesse falso o campo seria opcional (como um complemento de um endereço)
     password = forms.CharField(
-        required=True,
+        # required=True, (omitido)
         # Aqui estamos alterando os atributos do campo com o widget, esse tipo de alteração é 
         # uma sobrescrita, pois algumas coisas já haviam sido definidos na classe meta abaixo, 
         # alterar por sobrescrita pode gerar confusões, principalmente se o campo em questão for usado 
@@ -81,7 +95,10 @@ class RegisterForm(forms.ModelForm):
         #     'placeholder': 'Repeat your password'
         # })    
         widget=forms.PasswordInput(),
-        label='Password2'
+        label='Password2',
+        error_messages={
+            'required': 'Please, repeat your password'
+        },
     )
 
     class Meta:
@@ -102,21 +119,17 @@ class RegisterForm(forms.ModelForm):
         # a label será o nome dos campos, aqui definimos como cada campo será mostrado ao user
         labels = {
             'username': 'Username',
-            'first_name': 'First name',
-            'last_name': 'Last name',
-            'email': 'E-mail',
         }
         # os help_texts são as mensagens que ajudam o user a preencehr o campo, como uma dica de como preencher
-        help_texts = {
-            'email': 'The e-mail must be valid.',
-        }
+        # help_texts = {
+        #     'email': 'The e-mail must be valid.',
+        # }
         # as error_messages são as mensagens de erro, caso o user preencha errado um campo, podemos informar um 
         # erro, é necessário colocar o campo: e abrier chaves conm códigos específicos para o erro em questão, 
         # por exemplo o required é quanto um campo é obrigatório, invalid seria algo como digitar um email sem um @, etc
         error_messages = {
             'username': {
-                'required': 'Obrigatório. 150 caracteres ou menos. '
-                'Letras, números e @/./+/-/_ apenas.',
+                'required': 'This field must not be empty',
             } 
         }
         # as widgets serevem para configurar os campos, podemos por exemplo, definir atributos através do forms 

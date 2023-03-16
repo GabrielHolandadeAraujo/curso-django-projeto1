@@ -79,7 +79,12 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
         return super().setUp(*args, **kwargs)
     
     @parameterized.expand([
-        ('username', 'Obrigatório. 150 caracteres ou menos. Letras, números e @/./+/-/_ apenas.'),
+        ('username', 'This field must not be empty'),
+        ('first_name', 'Write your first name'),
+        ('last_name', 'Write your last name'),
+        ('password', 'Password must not be empty'),
+        ('password2', 'Please, repeat your password'),
+        ('email', 'E-mail is required'),
     ])
     def test_fields_cannot_be_empty(self, field, msg):
         # estamos alterando um campo para vazio para testar a mensagem de erro que será exibida
@@ -92,3 +97,7 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
         # por fim comparamos se a msg de erro está dentro do contéudo decodificado da resposta. 
         # Esse teste avalia várias coisas e por isso é integração
         self.assertIn(msg, response.content.decode('utf-8'))
+        # Esse campo abaixo é para compreender melhor os erros quando estiver escrevendo o teste 
+        # pois a asserção acima olha o conteúdo e tem informação demais para encontrar um erro.
+        # a asserssão abaixo busca pelo contexto do form buscando o erro do campo em específico (aula 147)
+        self.assertIn(msg, response.context['form'].errors.get(field))
