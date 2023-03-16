@@ -1,5 +1,8 @@
 from authors.forms import RegisterForm
-from django.test import TestCase
+from unittest import TestCase
+# Como existem dois TestCase, renomeamos o segundo para DjangoTestCase para evitar confusão de nomes
+from django.test import TestCase as DjangoTestCase
+from django.urls import reverse
 from parameterized import parameterized
 
 # para criar testes unitários precisamos de uma classe, nesse caso para os testes unitários de registro 
@@ -45,10 +48,11 @@ class AuthorRegisterFormUnitTest(TestCase):
         current = form[field].field.help_text
         self.assertEqual(current, needed)
 
+
     @parameterized.expand([
         ('username', 'Username'),
-        ('first_name', 'First Name'),
-        ('last_name', 'Last Name'),
+        ('first_name', 'First name'),
+        ('last_name', 'Last name'),
         ('email', 'E-mail'),
         ('password', 'Password'),
         ('password2', 'Password2'),
@@ -56,4 +60,35 @@ class AuthorRegisterFormUnitTest(TestCase):
     def test_fields_label(self, field, needed):
         form = RegisterForm()
         current = form[field].field.label
-        self.assertEqual(current, needed)
+        self.assertEqual(current, needed) 
+
+# partindo para testes de integração que são aqueles que testam várias coisas ao msm tempo, eles herdam da 
+# DjangoTestCase, pois é o TestCase renomeado que tem mais funcionalidades que o do Unittest, porém é mais lento. 
+class AuthorRegisterFormIntegrationTest(DjangoTestCase):
+    # Essa função é uma padrão e serve para executar antes de todas as outras da classe, usamos para 
+    # gerar dados necessários para os testes, no caso cadastrar um usuário
+    def setUp(self, *args, **kwargs):
+        self.form_data = {
+            'username': 'user',
+            'first_name': 'first',
+            'last_name': 'last',
+            'email': 'email@anyemail.com',
+            'password': 'Str0ngP@ssword1',
+            'password2': 'Str0ngP@ssword1',
+        }
+        return super().setUp(*args, **kwargs)
+    
+    @parameterized.expand([
+        ('username', 'Obrigatório. 150 caracteres ou menos. Letras, números e @/./+/-/_ apenas.'),
+    ])
+    def test_fields_cannot_be_empty(self, field, msg):
+        # estamos alterando um campo para vazio para testar a mensagem de erro que será exibida
+        self.form_data[field] = ''
+        # após isso renderizamos a url de criação de users para testar a mudança de tela
+        url = reverse('authors:create')
+        # mandamos um post para a url acima passando a aleteração do campo e precisamos 
+        # colocar um follow=True para permitir a mudança de telas
+        response = self.client.post(url, data=self.form_data, follow=True)
+        # por fim comparamos se a msg de erro está dentro do contéudo decodificado da resposta. 
+        # Esse teste avalia várias coisas e por isso é integração
+        self.assertIn(msg, response.content.decode('utf-8'))

@@ -63,7 +63,7 @@ class RegisterForm(forms.ModelForm):
         error_messages={
             'required': 'Password must not be empty'
         },
-        help_text= (
+        help_text=(
             'Password must have at least one uppercase letter, '
             'one lowercase letter and one number. The length should be '
             'at least 8 characters.'
@@ -76,7 +76,7 @@ class RegisterForm(forms.ModelForm):
     #aqui estamos gerando um campo novo a partir da sobrescrita de password para ser usado como método 
     # de segurança para comparar as senhas que devem ser iguais 
     password2 = forms.CharField(
-        required = True,
+        required=True,
         # widget = forms.PasswordInput(attrs={
         #     'placeholder': 'Repeat your password'
         # })    
@@ -95,28 +95,28 @@ class RegisterForm(forms.ModelForm):
             'password',
         ]
 
-        # para mostrar os campos nor form da pra dizer quais campos são exibidos, como no field acima, outra
+        # para mostrar os campos no form da pra dizer quais campos são exibidos, como no field acima, outra
         # opção é o exclude abaixo onde vc iforma quais campos não aparecem
         # exclude = ['first_name']
 
         # a label será o nome dos campos, aqui definimos como cada campo será mostrado ao user
-        label = {
-            'first_name': 'First Name',
-            'last_name': 'Last Name',
+        labels = {
             'username': 'Username',
+            'first_name': 'First name',
+            'last_name': 'Last name',
             'email': 'E-mail',
-            # 'password': 'Password',                      
         }
         # os help_texts são as mensagens que ajudam o user a preencehr o campo, como uma dica de como preencher
         help_texts = {
-            'email': 'The email must be valid.',
+            'email': 'The e-mail must be valid.',
         }
         # as error_messages são as mensagens de erro, caso o user preencha errado um campo, podemos informar um 
         # erro, é necessário colocar o campo: e abrier chaves conm códigos específicos para o erro em questão, 
         # por exemplo o required é quanto um campo é obrigatório, invalid seria algo como digitar um email sem um @, etc
         error_messages = {
             'username': {
-                'required': 'This field must not be empty',
+                'required': 'Obrigatório. 150 caracteres ou menos. '
+                'Letras, números e @/./+/-/_ apenas.',
             } 
         }
         # as widgets serevem para configurar os campos, podemos por exemplo, definir atributos através do forms 
@@ -175,7 +175,7 @@ class RegisterForm(forms.ModelForm):
         # a variável
         if password != password2:
             password_confirmation_error = ValidationError(
-                'Password e and password2 must be equal',
+                'Password and password2 must be equal',
                 code='invalid'
             )
             raise ValidationError({

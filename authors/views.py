@@ -1,7 +1,8 @@
-from django.shortcuts import render
-from .forms import RegisterForm
-from django.http import Http404
 from django.contrib import messages
+from django.http import Http404
+from django.shortcuts import redirect, render
+
+from .forms import RegisterForm
 
 # Create your views here.
 
@@ -34,7 +35,7 @@ def register_create(request):
         form.save()
         messages.success(request, 'Your user was created, please log in.')
         # Após salvar precisamos apagar os dados que foram preenchidos nos campos para ficar em branco novamente
-        del(request.session['register_form_data'])
+        del (request.session['register_form_data'])
 
     # o redirect é para madar o retorno para outra tela, no caso essa de authors:register que será usada na 
     # função de register_view acima
