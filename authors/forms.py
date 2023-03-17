@@ -50,6 +50,20 @@ class RegisterForm(forms.ModelForm):
         add_placeholder(self.fields['password2'], 'Repeat your password')
         # add_attr(self.fields['username'], 'css', 'a-css-class')
 
+    username = forms.CharField(
+        label='Username',
+        help_text=(
+            'Username must have letters, numbers or one of those @.+-_. '
+            'The length should be between 4 and 150 characters.'
+        ),
+        error_messages={
+            'required': 'This field must not be empty',
+            'min_length': 'Username must have at least 4 characters',
+            'max_length': 'Username must have less than 150 characters',
+        },
+        min_length=4, max_length=150,
+    )
+
     first_name = forms.CharField(
         error_messages={'required': 'Write your first name'},
         label='First name'
@@ -117,9 +131,9 @@ class RegisterForm(forms.ModelForm):
         # exclude = ['first_name']
 
         # a label será o nome dos campos, aqui definimos como cada campo será mostrado ao user
-        labels = {
-            'username': 'Username',
-        }
+        # labels = {
+        #     'username': 'Username',
+        # }
         # os help_texts são as mensagens que ajudam o user a preencehr o campo, como uma dica de como preencher
         # help_texts = {
         #     'email': 'The e-mail must be valid.',
@@ -127,11 +141,11 @@ class RegisterForm(forms.ModelForm):
         # as error_messages são as mensagens de erro, caso o user preencha errado um campo, podemos informar um 
         # erro, é necessário colocar o campo: e abrier chaves conm códigos específicos para o erro em questão, 
         # por exemplo o required é quanto um campo é obrigatório, invalid seria algo como digitar um email sem um @, etc
-        error_messages = {
-            'username': {
-                'required': 'This field must not be empty',
-            } 
-        }
+        # error_messages = {
+        #     'username': {
+        #         'required': 'This field must not be empty',
+        #     } 
+        # }
         # as widgets serevem para configurar os campos, podemos por exemplo, definir atributos através do forms 
         # o TextInput é para textos, podemos usar o attrs para definir um placeholder ou até mesmo uma classe css 
         # e sim, é basicamente manipular html direto pelo django.  
