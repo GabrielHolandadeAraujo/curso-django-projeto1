@@ -192,12 +192,23 @@ class RegisterForm(forms.ModelForm):
     
     # o clean sem definir nenhum campo especifico é uma função de validação do form inteiro e pode 
     # ser usado para validar mais de um campo ao msm tempo, como no caso de senhas iguais 
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '')
+        exists = User.objects.filter(email=email).exists()
+
+        if exists:
+            raise ValidationError(
+                'User e-mail is already in use', code='invalid',
+            )
+
+        return email
+
     def clean(self):
         # podemos acessar a classe pai com super e depois com .clean() para pegar todos os forms, 
         cleaned_data = super().clean()
         # depois é só pegar os especificos com o get
         password = cleaned_data.get('password')
-        password2 = cleaned_data.get('password')
+        password2 = cleaned_data.get('password2')
         # aqui estamos jogando o erro para uma variável e depois levantamos o erro nos campos desejados passando 
         # a variável
         if password != password2:
