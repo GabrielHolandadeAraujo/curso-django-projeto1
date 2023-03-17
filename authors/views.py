@@ -30,9 +30,13 @@ def register_create(request):
     # estamos verificando se o formulario foi validado, se sim o django vai salvar na base de dados e exibir 
     # uma menssagem de sucesso.
     if form.is_valid():
-        # existe uma forma de fingir salvar o usuário para adicionar novos valores, um exemplo: 
-        # form.save(commit=False), dessaa forma o commit não é feito e podemos add mais valores
-        form.save()
+        # estamos salvando os dados do form em uma varipavel ao invés de salvar no banco de dados, pois não 
+        # estamos comitando e assim podemos manipular os dados
+        user = form.save(commit=False)
+        # estamos encriptografando a senha para não ficar visível nem mesmo para os administradores
+        user.set_password(user.password)
+        # agora sim vamos salvos os dados no banco de dados
+        user.save()
         messages.success(request, 'Your user was created, please log in.')
         # Após salvar precisamos apagar os dados que foram preenchidos nos campos para ficar em branco novamente
         del (request.session['register_form_data'])
