@@ -1,18 +1,25 @@
 {% extends 'global/base.html' %}
-
+{% comment %} Aqui acima estendendo do arquivo base que contém o head do HTML {% endcomment %}
+{% comment %} Aqui temos um bloco de conteúdo de título para exibir Home | no título {% endcomment %}
 {% block title %}Home | {% endblock title %}
-
+{% comment %} Aqui temos outro bloco de conteúdo, desa vez chamado de content {% endcomment %}
 {% block content %}
-
-{% include 'recipes/partials/messages.html' %}
+{% comment %} Aqui incluimos o conteúdo da pag messages para completar essa página {% endcomment %}
+{% include 'global/partials/messages.html' %}
 
 <div class="main-content main-content-list container">
-    {% for recipe in recipes %}
-        {% include 'recipes/partials/recipe.html' %}
-    {% empty %}
+{% comment %} Fazemos um for dentro do recipes, que é o nome do app definido nas urls e colocado no sttings 
+do Django,  {% endcomment %}
+{% for recipe in recipes %}
+    {% comment %} incluimos as receitas na pagina de recipes para preencher o contudo na home {% endcomment %}
+    {% include 'recipes/partials/recipe.html' %}
+{% comment %} Caso não tenha nem uma receita, será exibido o conteúdo abaixo {% endcomment %}
+{% empty %}
     <div class="center m-y">
         <h1>No recipes found here 🥲</h1>
     </div>
-    {% endfor %}
+{% endfor %}
 </div>
 {% endblock content %}
+
+

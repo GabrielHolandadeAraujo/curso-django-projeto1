@@ -1,0 +1,46 @@
+<div class="main-content container">
+    {% comment %} Aqui estamos passando o método POST no form, isso pode ser usado como lógica de rota do sistema {% endcomment %}
+    {% comment %} Passamos a chave definida na view de author para renderizar a url desejada {% endcomment %}
+    <form action="{{ form_action }}" method="POST">
+    {% comment %} Esse csrf_token é obrigatório em forms do Django, pois serve para evitar ataques CSRF {% endcomment %}
+      {% csrf_token %}
+
+      <div class="form-content form-content-grid">
+        {% for field in form %}
+          <div class="form-group">
+            {% comment %} Aqui cada field tem uma id proória, então podemos selcionar cada uma com um for {% endcomment %}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% comment %} Esse field aqui mostra apenas o campo para receber os dados, precisamos do label 
+            acima para exibir os nomes dos campos {% endcomment %}
+            {{field}}
+            {% comment %} field.help_text é o campo que precisa seguir um padrão para ser aceito, isso é descrito
+            na tabela em questão (User no caso), por exemplo, um nome com limite de caracteres {% endcomment %}
+            {% if field.help_text %}
+              <p class="help-text">{{ field.help_text }}</p>
+            {% endif %}
+            {% comment %} O fiel.erros são o feedback de erros caso o usuário esteja mandando uma info inválida {% endcomment %}
+            {{ field.errors }}
+          </div>
+        {% endfor %}
+      </div>
+
+      {% comment %} aqui estamos verificando se existem mensagens de erro nos campos 
+      e dando uma aviso para que é necessário resolver para submeter, as mensagens de
+       erro também aparecem nos campos devido ao processo que ocorre em forms.py {% endcomment %}
+      {% if form.errors %}
+      <div class="form-content form-content-grid">
+        <div class="form-group">
+          <div class="message message-error">
+            There are errors in the form, please fix them and send again.
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="form-content form-content-grid">
+        <div class="form-group">
+          <button type="submit">Send</button>
+        </div>
+      </div>
+    </form>
+  </div>
