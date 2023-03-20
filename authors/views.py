@@ -2,7 +2,8 @@ from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from .forms import LoginForm, RegisterForm
 
 # Create your views here.
@@ -45,7 +46,8 @@ def register_create(request):
         messages.success(request, 'Your user was created, please log in.')
         # Após salvar precisamos apagar os dados que foram preenchidos nos campos para ficar em branco novamente
         del (request.session['register_form_data'])
-
+        # estamos mandando o user para a página de login logo após ser registrado
+        return redirect(reverse('authors:login'))
     # o redirect é para madar o retorno para outra tela, no caso essa de authors:register que será usada na
     # função de register_view acima
     return redirect('authors:register')
@@ -80,3 +82,18 @@ def login_create(request):
         messages.error(request, 'Invalid username or password')
     # todos os casos dos if else redirecionam para a msm url e por isso usanos apenas o return
     return redirect(login_url)
+
+# esse decorator precisa ser importado e serve para só liberar acesso a função um user que estiver logado
+# pasamos a url onde é feita o login e a url para ser redirecionado após o login
+# o next simplesmente manda para a página que o user tentou acessar sem estar logado, então ele 
+# será rediredcionado para o msm local após logar
+@login_required(login_url='authors:login', redirect_field_name='next')
+def logout_view(request):
+    if not request.POST:
+        return redirect(reverse('authors:login'))
+
+    if request.POST.get('username') != request.user.username:
+        return redirect(reverse('authors:login'))
+
+    logout(request)
+    return redirect(reverse('authors:login'))

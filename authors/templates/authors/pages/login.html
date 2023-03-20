@@ -11,10 +11,17 @@ o extends deve ser a primeira tag no doc parcial, não pode ter nem comentário 
     <h2>Login</h2>
     {% comment %} Verificamos se o usuário está logado e então exibimos uma msg para ele {% endcomment %}
     {% if request.user.is_authenticated %}
-      <p>
+    <div>
         Your are logged in with 
-        {{ request.user.username }}.
-      </p>
+        {{ request.user.username }}. 
+        Please, 
+        <form class="inline-form" action="{% url 'authors:logout' %}" method='POST'>
+          {% csrf_token %}
+          <input type="hidden" name="username" value="{{ request.user.username }}">
+          {% comment %} Aqui temos um botão para o user deslogar {% endcomment %}
+          <button class="plaintext-button" type="submit">click here</button>
+        </form> to logout.
+      </div>
     {% endif %}
   </div>
 
