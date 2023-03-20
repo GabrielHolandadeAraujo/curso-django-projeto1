@@ -2,8 +2,8 @@ from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
-
-from .forms import RegisterForm
+from django.contrib.auth import authenticate, login
+from .forms import LoginForm, RegisterForm
 
 # Create your views here.
 
@@ -51,8 +51,32 @@ def register_create(request):
     return redirect('authors:register')
 
 def login_view(request):
-    return render(request, 'authors/pages/login.html')
+    form = LoginForm()
+    return render(request, 'authors/pages/login.html', {
+        'form': form,
+        'form_action': reverse('authors:login_create')
+    })
 
 
 def login_create(request):
-    return render(request, 'authors/pages/login.html')
+    if not request.POST:
+        raise Http404()
+    # passamos a requisição para o form de login e renderizamos a url
+    form = LoginForm(request.POST)
+    login_url = reverse('authors:login')
+    # se os dados de login forem válidos, verificamos se o usuário pode ser loado
+    if form.is_valid():
+        authenticated_user = authenticate(
+            username=form.cleaned_data.get('username', ''),
+            password=form.cleaned_data.get('password', ''),
+        )
+        # se puder ser logado, verificamos se os dados não são vazios e fazemos o loing
+        if authenticated_user is not None:
+            messages.success(request, 'Your are logged in.')
+            login(request, authenticated_user)
+        else:
+            messages.error(request, 'Invalid credentials')
+    else:
+        messages.error(request, 'Invalid username or password')
+    # todos os casos dos if else redirecionam para a msm url e por isso usanos apenas o return
+    return redirect(login_url)

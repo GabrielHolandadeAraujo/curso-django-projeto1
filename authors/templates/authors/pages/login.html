@@ -9,6 +9,13 @@ o extends deve ser a primeira tag no doc parcial, não pode ter nem comentário 
 {% block content %}
   <div class="main-content center container">
     <h2>Login</h2>
+    {% comment %} Verificamos se o usuário está logado e então exibimos uma msg para ele {% endcomment %}
+    {% if request.user.is_authenticated %}
+      <p>
+        Your are logged in with 
+        {{ request.user.username }}.
+      </p>
+    {% endif %}
   </div>
 
   {% comment %} Aqui estamos carregando as msg de erros e o formulário {% endcomment %}
