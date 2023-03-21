@@ -16,6 +16,7 @@ o extends deve ser a primeira tag no doc parcial, não pode ter nem comentário 
         {{ request.user.username }}. 
         Please, 
         <form class="inline-form" action="{% url 'authors:logout' %}" method='POST'>
+          {% comment %} Para impedir o ataque CRSF devemos usar a varipavel abaixo {% endcomment %}
           {% csrf_token %}
           <input type="hidden" name="username" value="{{ request.user.username }}">
           {% comment %} Aqui temos um botão para o user deslogar {% endcomment %}
