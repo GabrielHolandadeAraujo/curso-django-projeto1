@@ -4,9 +4,11 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from utils.browser import make_chrome_browser
 
+from recipes.tests.test_recipe_base import RecipeMixin
+
 # estqmos herdando de StaticLiveServerTestCase para carregar o css da página, se não fosse necessário os
 # arquivos estáticos poderimos herdar de LiveServerTestCase que é mais leve, mas não carrega css na pag
-class RecipeBaseFunctionalTest(StaticLiveServerTestCase):
+class RecipeBaseFunctionalTest(StaticLiveServerTestCase, RecipeMixin):
     # Estamos abrindo o acesso ao drive aqui para não precisar abrir nos testes
     def setUp(self) -> None:
         self.browser = make_chrome_browser()
