@@ -1,6 +1,6 @@
 from pathlib import Path
 from time import sleep
-
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 
@@ -19,10 +19,13 @@ CHROMEDRIVER_PATH = ROOT_PATH / 'bin' / CHROMEDRIVER_NAME
 def make_chrome_browser(*options):
     # pegamos as opções do Chrome, tem que importar o webdriver
     chrome_options = webdriver.ChromeOptions()
-    #se tiver argumetos no options, passamos pela tupla com um for e adcionamos as opções
+    # se tiver argumetos no options, passamos pela tupla com um for e adcionamos as opções
     if options is not None:
         for option in options:
             chrome_options.add_argument(option)
+    # aqui definimos se vai ou não mostrar o teste abrindo o navegador, adicionando o comando
+    if os.environ.get('SELENIUM_HEADLESS') == '1':
+        chrome_options.add_argument('--headless')
     # depois definimos o serviço a ser executado pegando o caminho do arquivo
     chrome_service = Service(executable_path=CHROMEDRIVER_PATH)
     # depois passamos o serviço e as opções para o navegador e retornamos a variável para acessar as funções 
