@@ -1,7 +1,7 @@
 <div class="main-content container">
     {% comment %} Aqui estamos passando o método POST no form, isso pode ser usado como lógica de rota do sistema {% endcomment %}
     {% comment %} Passamos a chave definida na view de author para renderizar a url desejada {% endcomment %}
-    <form action="{{ form_action }}" method="POST">
+    <form class="main-form" action="{{ form_action }}" method="POST">
     {% comment %} Esse csrf_token é obrigatório em forms do Django, pois serve para evitar ataques CSRF {% endcomment %}
       {% csrf_token %}
 

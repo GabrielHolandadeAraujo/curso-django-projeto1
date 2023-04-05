@@ -1,14 +1,10 @@
 from .base import AuthorsBaseTest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+import pytest
 
+@pytest.mark.functional_test
 class AuthorsRegisterTest(AuthorsBaseTest):
-    # procuramos pelo placeholder, aqui usamos o prórpio form (form.find_element pq estamos com o campo selecionado)
-
-    def get_by_placeholder(self, web_element, placeholder):
-        return web_element.find_element(
-            By.XPATH, f'//input[@placeholder="{placeholder}"]'
-        )
     # aqui é para preencher os dados dos campos para testar a resposta a requisição
     def fill_form_dummy_data(self, form):
         # buscamos todos os campos pois são input
