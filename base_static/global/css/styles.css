@@ -421,6 +421,12 @@ body {
     color: var(--color-white);
   }
 
+/* Authors */
+.login-message {
+    margin: 1rem 0;
+  }
+  
+
 /* Generics */
 
 .center {

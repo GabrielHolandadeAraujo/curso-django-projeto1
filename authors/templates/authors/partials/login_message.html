@@ -1,0 +1,15 @@
+{% comment %} Verificamos se o usuário está logado e então exibimos uma msg para ele {% endcomment %}
+{% if request.user.is_authenticated %}
+<div>
+    Your are logged in with 
+    {{ request.user.username }}. 
+    Please, 
+    <form class="inline-form" action="{% url 'authors:logout' %}" method='POST'>
+      {% comment %} Para impedir o ataque CRSF devemos usar a varipavel abaixo {% endcomment %}
+      {% csrf_token %}
+      <input type="hidden" name="username" value="{{ request.user.username }}">
+      {% comment %} Aqui temos um botão para o user deslogar {% endcomment %}
+      <button class="plaintext-button" type="submit">click here</button>
+    </form> to logout.
+  </div>
+{% endif %}

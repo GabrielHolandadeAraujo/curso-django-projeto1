@@ -10,6 +10,7 @@ class AuthorLogoutTest(TestCase):
 
         response = self.client.get(
             reverse('authors:logout'),
+            # isso é para fazer o redirecionamento mesmo se der erro para ter conteudo na tela do usuário para o teste
             follow=True
         )
 
