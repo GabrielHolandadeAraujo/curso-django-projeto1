@@ -11,7 +11,7 @@ class CategoryAdmin(admin.ModelAdmin):
 #Outra maneira é colocando um decorator com @admin.registrer passando a função importada como parâmetro e criar a função
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    # aqui é onde configuramos a área administrativa do django
+    # aqui é onde configuramos a área administrativa do django, as alterações são feitas no admim de cada app
     # o list_display recebe uma lista com todas os campos que estarão visiveis na área de admim (o padrão é só id)
     list_display = ['id', 'title', 'created_at', 'is_published', 'author']
     # o list_display_links recebe uma lista de todos os campos que serão links para o post (o padrão é só id)

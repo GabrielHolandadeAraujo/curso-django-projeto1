@@ -10,8 +10,27 @@ o extends deve ser a primeira tag no doc parcial, não pode ter nem comentário 
   <div class="main-content center container">
     <h2>Dashboard ({{ user }})</h2>
     {% include 'authors/partials/login_message.html' %}
+
+    <div class="authors-dashboard-container">
+      <h3>Your recipes</h3>
+
+      <ul>
+        {% for recipe in recipes %}
+          <li>
+            {% comment %} da url authors:dashboard_recipe_edit exibimos o id da receita e o título {% endcomment %}
+            <a href="{% url 'authors:dashboard_recipe_edit' recipe.id %}">{{ recipe.title }}</a>
+          </li>
+        {% empty %}
+          <li>
+            <p>You do not have recipes, please create one.</p>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
 
   {% include 'global/partials/messages.html' %}
+
+  
 
   {% endblock content %}

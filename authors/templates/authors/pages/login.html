@@ -14,6 +14,9 @@ o extends deve ser a primeira tag no doc parcial, não pode ter nem comentário 
 
   {% comment %} Aqui estamos carregando as msg de erros e o formulário {% endcomment %}
   {% include 'global/partials/messages.html' %}
-  {% include 'global/partials/form.html' %} 
+  {% comment %} Só exibi o fomr de login se o user não esiver logado {% endcomment %}
+  {% if not user.is_authenticated %}
+    {% include 'global/partials/form.html' %}
+  {% endif %}
   
 {% endblock content %}
