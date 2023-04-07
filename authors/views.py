@@ -92,10 +92,13 @@ def logout_view(request):
     # verificamos se é por método post, se for get vai voltar para página de login, isso é para evitar acessar 
     # a página via link sem passar pelo login
     if not request.POST:
+        messages.error(request, 'Invalid logout request')
         return redirect(reverse('authors:login'))
     # também verificamos se o usuário logado é o msm que está tentando acessar
     if request.POST.get('username') != request.user.username:
+        messages.error(request, 'Invalid logout user')
         return redirect(reverse('authors:login'))
     # por fim realizamos o logtou (cuidado para não colocar o nome da função igual a padrão que causaria erros)
+    messages.success(request, 'Logged out successfully')
     logout(request)
     return redirect(reverse('authors:login'))
