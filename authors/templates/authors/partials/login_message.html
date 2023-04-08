@@ -3,7 +3,7 @@
 <div>
     Your are logged in with 
     {{ request.user.username }}. 
-    Please, 
+    <a href="{% url 'authors:dashboard' %}">See your recipes</a> or 
     <form class="inline-form" action="{% url 'authors:logout' %}" method='POST'>
       {% comment %} Para impedir o ataque CRSF devemos usar a varipavel abaixo {% endcomment %}
       {% csrf_token %}

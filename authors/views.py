@@ -140,8 +140,23 @@ def dashboard_recipe_edit(request, id):
     # isso é para atualizar caso já exista ou criar caso não exista.
     form = AuthorRecipeForm(
         data=request.POST or None,
+        # para receber uma mídia ou não
+        files=request.FILES or None,
         instance=recipe
     )
+
+    if form.is_valid():
+        # Agora, o form é válido e eu posso tentar salvar, fingimos salvar para faze algumas manipulações
+        recipe = form.save(commit=False)
+        # garantimos que esses campos serão salvos com os dados abaixo como medida de segurança adicional
+        recipe.author = request.user
+        recipe.preparation_steps_is_html = False
+        recipe.is_published = False
+
+        recipe.save()
+
+        messages.success(request, 'Sua receita foi salva com sucesso!')
+        return redirect(reverse('authors:dashboard_recipe_edit', args=(id,)))
 
     return render(
         request,

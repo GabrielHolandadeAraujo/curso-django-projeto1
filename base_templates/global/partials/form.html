@@ -1,13 +1,22 @@
 <div class="main-content container">
     {% comment %} Aqui estamos passando o método POST no form, isso pode ser usado como lógica de rota do sistema {% endcomment %}
     {% comment %} Passamos a chave definida na view de author para renderizar a url desejada {% endcomment %}
-    <form class="main-form" action="{{ form_action }}" method="POST">
+    {% comment %} O enctype="multipart/form-data" sempre deve ser informado quando aceitamos mídias
+    para o servidor e navegador saber que haverá tráfego de mídias{% endcomment %}
+    <form 
+    class="main-form"
+    action="{{ form_action }}" 
+    method="POST"
+    enctype="multipart/form-data"  
+  >
+  
     {% comment %} Esse csrf_token é obrigatório em forms do Django, pois serve para evitar ataques CSRF {% endcomment %}
       {% csrf_token %}
 
       <div class="form-content form-content-grid">
         {% for field in form %}
-          <div class="form-group">
+        {% comment %} estamos pegando os atributos de classe dos campos para manipular {% endcomment %}
+        <div class="form-group {{ field.field.widget.attrs.class }}">
             {% comment %} Aqui cada field tem uma id proória, então podemos selcionar cada uma com um for {% endcomment %}
             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             {% comment %} Esse field aqui mostra apenas o campo para receber os dados, precisamos do label 
@@ -21,6 +30,13 @@
             {% comment %} O fiel.erros são o feedback de erros caso o usuário esteja mandando uma info inválida {% endcomment %}
             {{ field.errors }}
           </div>
+          {% comment %} Verificamos se o campo é o cover e se ele tem uma url (se tem uma imagem), se sim
+          exibimos a imagem {% endcomment %}
+          {% if field.name == 'cover' and field.value.url %}
+            <div class="span-2">
+              <img src="{{ field.value.url }}" alt="Capa para {{ recipe.title }}">
+            </div>
+          {% endif %}
         {% endfor %}
       </div>
 
