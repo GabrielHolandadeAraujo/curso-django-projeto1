@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import LoginForm, RegisterForm
 from recipes.models import Recipe
+from authors.forms.recipe_form import AuthorRecipeForm
 
 # Create your views here.
 
@@ -126,15 +127,26 @@ def dashboard_recipe_edit(request, id):
         is_published=False,
         author=request.user,
         pk=id,
-    )
+        #essa função first é para retornar apenas o primeiro elemento encontrado, pois o filter retorna uma lista 
+        # de elementos encontrados. ao invés dessa função, poderiamos usar o get no lugar do filter que retorna só um
+        # porém o get gera um erro se não encontrar, isso tornaria o if abaixo obsoleto. Optamos por nós mesmos 
+        # conferirmos se o elemento existe
+    ).first()
     # se a receita não existir da um 404
     if not recipe:
         raise Http404()
+    # instaciamos a classe de forms do authors podendo passar a requisição (caso o filtro acima encontre o elemento)
+    # ou None, caso a receita ainda não exista. Depois instaciamos na própria variável acima (do filtro), caso ela exista
+    # isso é para atualizar caso já exista ou criar caso não exista.
+    form = AuthorRecipeForm(
+        data=request.POST or None,
+        instance=recipe
+    )
 
     return render(
         request,
         'authors/pages/dashboard_recipe.html',
         context={
-            
+            'form': form
         }
     )
