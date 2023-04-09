@@ -165,3 +165,33 @@ def dashboard_recipe_edit(request, id):
             'form': form
         }
     )
+
+@login_required(login_url='authors:login', redirect_field_name='next')
+def dashboard_recipe_new(request):
+    form = AuthorRecipeForm(
+        data=request.POST or None,
+        # para receber uma mídia ou não
+        files=request.FILES or None,
+    )
+
+    if form.is_valid():
+        # Agora, o form é válido e eu posso tentar salvar, fingimos salvar para faze algumas manipulações
+        recipe = form.save(commit=False)
+        # garantimos que esses campos serão salvos com os dados abaixo como medida de segurança adicional
+        recipe.author = request.user
+        recipe.preparation_steps_is_html = False
+        recipe.is_published = False
+
+        recipe.save()
+
+        messages.success(request, 'Sua receita foi criada com sucesso!')
+        return redirect(reverse('authors:dashboard_recipe_create'))
+
+    return render(
+        request,
+        'authors/pages/dashboard_recipe.html',
+        context={
+            'form': form,
+            'form_action': reverse('authors:dashboard_recipe_new')
+        }
+    )
