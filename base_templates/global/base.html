@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -14,5 +15,6 @@
            {% include 'global/partials/pagination.html' %}
         </main>
         {% include 'global/partials/footer.html' %}
+        <script src="{% static 'global/js/scripts.js' %}"></script>
     </body>
 </html>

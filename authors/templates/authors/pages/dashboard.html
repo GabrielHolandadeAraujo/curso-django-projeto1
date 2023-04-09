@@ -10,6 +10,7 @@ o extends deve ser a primeira tag no doc parcial, não pode ter nem comentário 
   <div class="main-content center container">
     <h2>Dashboard ({{ user }})</h2>
     {% include 'authors/partials/login_message.html' %}
+    {% include 'global/partials/messages.html' %}
 
     <div class="authors-dashboard-container">
       <h3>Your recipes</h3>
@@ -18,7 +19,16 @@ o extends deve ser a primeira tag no doc parcial, não pode ter nem comentário 
         {% for recipe in recipes %}
           <li>
             {% comment %} da url authors:dashboard_recipe_edit exibimos o id da receita e o título {% endcomment %}
-            <a href="{% url 'authors:dashboard_recipe_edit' recipe.id %}">{{ recipe.title }}</a>
+            <a href="{% url 'authors:dashboard_recipe_edit' recipe.id %}">{{ recipe.title }}</a> - 
+            <form 
+            class="inline-form form-delete" 
+            action="{% url 'authors:dashboard_recipe_delete' %}"
+            method='POST'
+            >
+              {% csrf_token %}
+              <input type="hidden" name="id" value="{{ recipe.id }}">
+              <button class="plaintext-button" type="submit">❌</button>
+            </form>
           </li>
         {% empty %}
           <li>
@@ -28,9 +38,5 @@ o extends deve ser a primeira tag no doc parcial, não pode ter nem comentário 
       </ul>
     </div>
   </div>
-
-  {% include 'global/partials/messages.html' %}
-
-  
 
   {% endblock content %}
