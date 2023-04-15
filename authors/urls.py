@@ -26,7 +26,8 @@ urlpatterns = [
     ),
     path(
         'dashboard/recipe/<int:id>/edit/',
-        views.dashboard_recipe_edit,
+        # para passar uma classe como função podemos usar o .as_view()
+        views.DashboardRecipe.as_view(),
         name='dashboard_recipe_edit'
     ),
     
