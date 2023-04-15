@@ -1,12 +1,26 @@
 from django.contrib.auth.models import User
 from django.db import models
-
+from django.urls import reverse
+from django.utils.text import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length=65)
 
     def __str__(self):
         return self.name
+    # podemos criar essa função get_absolute_url para renderizar urls no sie de forma mais simples, basicamente
+    # a url da view e com args ou kwargs passamos parâmetros adicionais das páginas, no exemplo abaixzo passamos 
+    # o id de uma receita
+    def get_absolute_url(self):
+        return reverse("recipes:recipe", args=(self.id,))  
+    # podemos sobrescrever algumas funções padrões como o save para se comportar de maneira vantajosa
+    def save(self, *args, **kwargs):
+        # nesse caso podemos fazer o gerador de slug a partir do título
+        if not self.slug:
+            slug = f'{slugify(self.title)}'
+            self.slug = slug
+        # sempre temos que retornar a função sobrescrita chamando a super classe
+        return super().save(*args, **kwargs)
 
 
 class Recipe(models.Model):
