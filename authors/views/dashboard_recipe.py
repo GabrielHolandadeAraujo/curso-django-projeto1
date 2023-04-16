@@ -7,20 +7,40 @@ from django.views import View
 from recipes.models import Recipe
 
 class DashboardRecipe(View):
-    def get(self, request, id):
-        #filtramos a receita não publicadas do usuário pelo id
+    def get_recipe(self, id):
+       recipe = None
+       # verificamos se o id da receita existe filtrando se está publicado, se o author é o msm que está logado
+       # e se o id é igual a chave primária. Como o filter retorna uma lista de valores encontrados, usamos
+       # o .first() para retornar apenas o primeirpo valor encontrado, outra opção é usar o get que se retorna
+       # um valor, mas levanta erro se não econtrar.
+       if id:
         recipe = Recipe.objects.filter(
-            is_published=False,
-            author=request.user,
-            pk=id,
-            #essa função first é para retornar apenas o primeiro elemento encontrado, pois o filter retorna uma lista 
-            # de elementos encontrados. ao invés dessa função, poderiamos usar o get no lugar do filter que retorna só um
-            # porém o get gera um erro se não encontrar, isso tornaria o if abaixo obsoleto. Optamos por nós mesmos 
-            # conferirmos se o elemento existe
+           is_published=False,
+           author=self.request.user,
+           pk=id,
         ).first()
         # se a receita não existir da um 404
         if not recipe:
             raise Http404()
+        
+        return recipe
+    # essa função é para rendereizar o formulário, criada aqui para evitar repetição desse trecho de código
+    def render_recipe(self, form):
+        return render(
+           self.request,
+           'authors/pages/dashboard_recipe.html',
+           context={
+                'form': form 
+           }
+        )
+    
+    def get(self, request, id):
+        recipe = self.get_recipe(id)
+        form = AuthorRecipeForm(instance=recipe)
+        return self.render_recipe(form)
+
+    def post(self, request, id):
+        recipe = self.get_recipe(id)
         # instaciamos a classe de forms do authors podendo passar a requisição (caso o filtro acima encontre o elemento)
         # ou None, caso a receita ainda não exista. Depois instaciamos na própria variável acima (do filtro), caso ela exista
         # isso é para atualizar caso já exista ou criar caso não exista.
@@ -44,10 +64,4 @@ class DashboardRecipe(View):
             messages.success(request, 'Sua receita foi salva com sucesso!')
             return redirect(reverse('authors:dashboard_recipe_edit', args=(id,)))
 
-        return render(
-            request,
-            'authors/pages/dashboard_recipe.html',
-            context={
-                'form': form
-            }
-        )
+        return self.render_recipe(form)
