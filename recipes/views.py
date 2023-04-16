@@ -1,5 +1,6 @@
 import os
-
+from typing import List
+from django.views.generic import ListView
 from django.contrib import messages
 from django.db.models import Q
 from django.http.response import Http404
@@ -12,6 +13,34 @@ from utils.pagination import make_pagination
 # Caso o valor da 'PER_PAGE' não seja encontrado, o valor padrão será 6
 PER_PAGE = int(os.environ.get('PER_PAGE', 6))
 
+# o ListView é uma CBV do Django para tratar de listas e já tem várias funções prontas como uma paginação
+# Como a pagina home é uma lista de receitas, podemos usar essa cbv para lá.
+class RecipeListViewBase(ListView):
+    model = Recipe
+    context_object_name = 'recipes'
+    ordering = ['-id']
+    template_name = 'recipes/pages/home.html'
+    # pra tratar de exibir só os filtradso precisamos mexer na queryset e pora isso temos que reescrecer a função
+    # get_queryset do django filtrando os publicados e retornando a variável que criamos no filtro
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        qs = qs.filter(
+            is_published=True,
+        )
+        return qs
+    # Como fizemos um paginação própria, temos que defini-la com uma função que usará a função que criamos para
+    # fazer a paginaçãp e atualizar na home.
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+        page_object, pagination_range = make_pagination(
+            self.request,
+            ctx.get('recipes'),
+            PER_PAGE
+        )
+        ctx.update(
+            {'recipes': page_object, 'pagination_range': pagination_range}
+        )
+        return ctx
 
 def home(request):
     recipes = Recipe.objects.filter(
@@ -81,3 +110,4 @@ def search(request):
         'pagination_range': pagination_range,
         'additional_url_query': f'&q={search_term}',
     })
+
