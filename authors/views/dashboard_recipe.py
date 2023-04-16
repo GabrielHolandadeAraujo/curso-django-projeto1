@@ -5,8 +5,30 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 from recipes.models import Recipe
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
+# o method_decorator serve para decorar métodos, pode ser usado tanto em funções como em classes. Porém para usar 
+# em classes é necessário dar o nome do método que vai chamar, no caso o dispatch que vem logo apos o setup na 
+# ordem do django. no caso estamos definindo que é necessário estar logado para acessar e caso consiga o next
+# manda para a url original que tentamos buscar.
+method_decorator(
+    login_required(login_url='auhtors:login', redirect_field_name='next'),
+    name='dispatch'
+)
 class DashboardRecipe(View):
+    # podemos reescrever métodos como o init, sempre que for reescrever é necessário chamar o init da função super
+    # que é a principal do django,passando args e kwargs que são os parâmetros que estamos usando
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    # no casos das outras funções que formos reescrever fazemos igual, mas retornamos o chamado do super chamando a
+    # função que estamos alterando
+    def setup(self, *args, **kwargs):
+        return super().setup(*args, **kwargs)
+    # essas funões aqui estão apenas de exemplo, pois não estão fazendo nada    
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
     def get_recipe(self, id=None):
        recipe = None
        # verificamos se o id da receita existe filtrando se está publicado, se o author é o msm que está logado
