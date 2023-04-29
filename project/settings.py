@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'INSECURE')  # noqa: E501
 DEBUG = True if os.environ.get('DEBUG') == '1' else False
 
 #hosts permitidos
-ALLOWED_HOSTS: list[str] = [*]
+ALLOWED_HOSTS: list[str] = []
 
 
 # Application definition

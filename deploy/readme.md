@@ -68,14 +68,19 @@ Mais avançado: https://youtu.be/FZaEukN_raA
 
 ```
 sudo -u postgres psql
+
 # Criando um super usuário
 CREATE ROLE usuario WITH LOGIN SUPERUSER CREATEDB CREATEROLE PASSWORD 'senha';
+
 # Criando a base de dados
 CREATE DATABASE basededados WITH OWNER usuario;
+
 # Dando permissões
 GRANT ALL PRIVILEGES ON DATABASE basededados TO usuario;
+
 # Saindo
 \q
+
 sudo systemctl restart postgresql
 ```
 

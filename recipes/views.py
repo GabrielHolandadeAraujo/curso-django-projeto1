@@ -4,6 +4,8 @@ from django.http.response import Http404
 from django.views.generic import DetailView, ListView
 from recipes.models import Recipe
 from utils.pagination import make_pagination
+from django.http import JsonResponse
+from django.forms.models import model_to_dict
 
 # Aqui estamos definindo a qtd de itens por página usando a constante em .env
 # Caso o valor da 'PER_PAGE' não seja encontrado, o valor padrão será 6
@@ -41,6 +43,18 @@ class RecipeListViewBase(ListView):
     
 class RecipeListViewHome(RecipeListViewBase):
     template_name = 'recipes/pages/home.html'
+
+class RecipeListViewHomeApi(RecipeListViewBase):
+    template_name = 'recipes/pages/home.html'
+
+    def render_to_response(self, context, **response_kwargs):
+        recipes = self.get_context_data()['recipes']
+        recipes_list = recipes.object_list.values()
+
+        return JsonResponse(
+            list(recipes_list),
+            safe=False
+        )
 
 class RecipeListViewCategory(RecipeListViewBase):
     template_name = 'recipes/pages/category.html'
@@ -114,6 +128,33 @@ class RecipeDetail(DetailView):
         })
 
         return ctx
+    
+class RecipeDetailAPI(RecipeDetail):
+    def render_to_response(self, context, **response_kwargs):
+        recipe = self.get_context_data()['recipe']
+        # o model_to_dict transforma um modelo em um dicionário com os dados do modelo
+        recipe_dict = model_to_dict(recipe)
+        # estamos adicionando a data de criação e atualização no dicionário
+        recipe_dict['created_at'] = str(recipe.created_at)
+        recipe_dict['updated_at'] = str(recipe.updated_at)
+        # precisamos verificar se o modelo tem imagem, se tiver temos que fazer uma operação
+        if recipe_dict.get('cover'):
+            # invés da imagem, passamos a url. Para passar a url completa precisamos pegar a url absoluta 
+            # e untar com a url do dicionário fatiada, pois uma barra seria duplicada. A barra é o primeiro 
+            # elemento da segunda string então podemos fatiar apenas ela.
+            recipe_dict['cover'] = self.request.build_absolute_uri() + \
+                recipe_dict['cover'].url[1:]
+        else:
+            # se não tiver img passamos apenas uma string vazia
+            recipe_dict['cover'] = ''
+        # removemos do dicionário as informações de dados html
+        del recipe_dict['is_published']
+        del recipe_dict['preparation_steps_is_html']
+        # por fim damos a resposta em json passando o dicionário e o safe
+        return JsonResponse(
+            recipe_dict,
+            safe=False,
+        )
 
     # INFORMAÇÕES:
     # O - no id serve para inverter a ordem, o Q coloca os termos entre parênteses
