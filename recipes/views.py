@@ -1,15 +1,59 @@
 import os
-from django.db.models import Q
+from django.db.models import F, Q, Value
+from django.db.models.functions import Concat
 from django.http.response import Http404
 from django.views.generic import DetailView, ListView
 from recipes.models import Recipe
 from utils.pagination import make_pagination
 from django.http import JsonResponse
+from django.shortcuts import render
 from django.forms.models import model_to_dict
+from django.db.models.aggregates import Count
 
 # Aqui estamos definindo a qtd de itens por página usando a constante em .env
 # Caso o valor da 'PER_PAGE' não seja encontrado, o valor padrão será 6
 PER_PAGE = int(os.environ.get('PER_PAGE', 6))
+
+def theory(request, *args, **kwargs):
+    # recipes = Recipe.objects.values('id', 'title')
+    # try:
+    #     recipes = Recipe.objects.get(pk=10000)
+    # except ObjectDoesNotExist:
+    #     recipes = None
+    # recipes = Recipe.objects.filter(
+    #     Q(
+    #         Q(title__icontains='da',
+    #           id__gt=2,
+    #           is_published=True,) |
+    #         Q(
+    #             id__gt=1000
+    #         )
+    #     )
+    # )[:10]
+    #     id=F('author__id'),
+    # ).order_by('-id', 'title')[:1]
+    # recipes = Recipe.objects \
+    #     .values('id', 'title', 'author__username')[:10]
+    # recipes = Recipe.objects.values('id', 'title')[:5]
+    recipes = Recipe.objects.all().annotate(
+        author_full_name=Concat(
+            F('author__first_name'), Value(' '),
+            F('author__last_name'), Value(' ('),
+            F('author__username'), Value(')'),
+        )
+    )
+    number_of_recipes = recipes.aggregate(number=Count('id'))
+
+    context = {
+        'recipes': recipes,
+        'number_of_recipes': number_of_recipes['number']
+    }
+
+    return render(
+        request,
+        'recipes/pages/theory.html',
+        context=context
+    )
 
 # o ListView é uma CBV do Django para tratar de listas e já tem várias funções prontas como uma paginação
 # Como a pagina home é uma lista de receitas, podemos usar essa cbv para lá.
@@ -25,6 +69,7 @@ class RecipeListViewBase(ListView):
         qs = qs.filter(
             is_published=True,
         )
+        qs = qs.select_related('author', 'category')
         return qs
     # Como fizemos um paginação própria, temos que defini-la com uma função que usará a função que criamos para
     # fazer a paginaçãp e atualizar na home.
