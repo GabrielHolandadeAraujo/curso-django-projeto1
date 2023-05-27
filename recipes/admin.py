@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericStackedInline
+from tag.models import Tag
 
 # Register your models here.
 
@@ -7,6 +9,11 @@ from .models import Category, Recipe
 #Primeira forma de importar a tabela é fazer a função e usar o comando admin.site.registrer pasando a tabela importada e a função criada
 class CategoryAdmin(admin.ModelAdmin):
     ...
+
+class TagInline(GenericStackedInline):
+    model = Tag
+    fields = 'name',
+    extra = 1
 
 #Outra maneira é colocando um decorator com @admin.registrer passando a função importada como parâmetro e criar a função
 @admin.register(Recipe)
@@ -32,5 +39,9 @@ class RecipeAdmin(admin.ModelAdmin):
     prepopulated_fields = {
         "slug": ('title',)
     }
+
+    inlines = [
+        TagInline,
+    ]
 
 admin.site.register(Category, CategoryAdmin)
