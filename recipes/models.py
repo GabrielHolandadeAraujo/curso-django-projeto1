@@ -1,8 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
-from django.utils.text import 
-from django.contrib.contenttypes.fields import GenericRelation
+from django.utils.text import slugify
+from collections import defaultdict
+from django.forms import ValidationError
+# from django.contrib.contenttypes.fields import GenericRelation
 from tag.models import Tag
 
 class Category(models.Model):
@@ -23,6 +25,7 @@ class Category(models.Model):
             self.slug = slug
         # sempre temos que retornar a função sobrescrita chamando a super classe
         return super().save(*args, **kwargs)
+    
 
 
 class Recipe(models.Model):
@@ -48,7 +51,34 @@ class Recipe(models.Model):
         User, on_delete=models.SET_NULL, null=True
     )
 
-    tags = GenericRelation(Tag, related_query_name='recipes')
+    # tags = GenericRelation(Tag, related_query_name='recipes')
+    tags = models.ManyToManyField(Tag)
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('recipes:recipe', args=(self.id,))
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            slug = f'{slugify(self.title)}'
+            self.slug = slug
+
+        return super().save(*args, **kwargs)
+
+    def clean(self, *args, **kwargs):
+        error_messages = defaultdict(list)
+
+        recipe_from_db = Recipe.objects.filter(
+            title__iexact=self.title
+        ).first()
+
+        if recipe_from_db:
+            if recipe_from_db.pk != self.pk:
+                error_messages['title'].append(
+                    'Found recipes with the same title'
+                )
+
+        if error_messages:
+            raise ValidationError(error_messages)

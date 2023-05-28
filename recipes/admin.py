@@ -1,6 +1,6 @@
 from django.contrib import admin
-from django.contrib.contenttypes.admin import GenericStackedInline
-from tag.models import Tag
+# from django.contrib.contenttypes.admin import GenericStackedInline
+# from tag.models import Tag
 
 # Register your models here.
 
@@ -10,10 +10,10 @@ from .models import Category, Recipe
 class CategoryAdmin(admin.ModelAdmin):
     ...
 
-class TagInline(GenericStackedInline):
-    model = Tag
-    fields = 'name',
-    extra = 1
+# class TagInline(GenericStackedInline):
+#     model = Tag
+#     fields = 'name',
+#     extra = 1
 
 #Outra maneira é colocando um decorator com @admin.registrer passando a função importada como parâmetro e criar a função
 @admin.register(Recipe)
@@ -40,8 +40,10 @@ class RecipeAdmin(admin.ModelAdmin):
         "slug": ('title',)
     }
 
-    inlines = [
-        TagInline,
-    ]
+    autocomplete_fields = 'tags',
+
+    # inlines = [
+    #     TagInline,
+    # ]
 
 admin.site.register(Category, CategoryAdmin)

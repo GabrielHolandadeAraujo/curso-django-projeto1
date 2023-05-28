@@ -12,7 +12,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from django.contrib.messages import constants
+# from utils.environment import get_env_variable, parse_comma_sep_str_to_list
 import os
+
+if os.environ.get('DEBUG', None) is None:
+    from dotenv import load_dotenv
+    load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,6 +34,12 @@ DEBUG = True if os.environ.get('DEBUG') == '1' else False
 
 #hosts permitidos
 ALLOWED_HOSTS: list[str] = []
+# ALLOWED_HOSTS: list[str] = parse_comma_sep_str_to_list(
+#     get_env_variable('ALLOWED_HOST')
+# )
+# CSRF_TRUSTED_ORIGINS: list[str] = parse_comma_sep_str_to_list(
+#     get_env_variable('CSRF_TRUSTED_ORIGINS')
+# )
 
 
 # Application definition
